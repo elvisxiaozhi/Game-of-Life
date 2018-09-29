@@ -1,1 +1,1 @@
-# Simple-File-Similarity-Checker
+# Conway's Game Of Life
