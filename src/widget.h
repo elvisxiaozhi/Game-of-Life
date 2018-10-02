@@ -25,6 +25,7 @@ private:
     QTimer *timer;
 
     void setGameLayout();
+    int returnNeighborNums(int, int);
 
 private slots:
     void timerTimeOut();
