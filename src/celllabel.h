@@ -19,6 +19,7 @@ protected:
     void mousePressEvent(QMouseEvent *);
 
 signals:
+    void alive();
     void dead();
 };
 

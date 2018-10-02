@@ -26,6 +26,7 @@ private:
 
     void setGameLayout();
     int returnNeighborNums(int, int);
+    void reproductCells(int, int);
 
 private slots:
     void timerTimeOut();
