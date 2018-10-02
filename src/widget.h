@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::Widget *ui;
+    static const int rows;
+    static const int cols;
 
     void setGameLayout();
 };

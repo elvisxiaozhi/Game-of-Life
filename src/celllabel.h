@@ -9,10 +9,11 @@ class CellLabel : public QLabel
 {
     Q_OBJECT
 public:
-    explicit CellLabel(QWidget *parent = nullptr);
+    CellLabel(QWidget *parent = nullptr, int row = 0, int col = 0);
     bool isAlive;
 
 private:
+    int row, col;
 
 protected:
     void mousePressEvent(QMouseEvent *);
