@@ -37,6 +37,7 @@ void Widget::setGameLayout()
     connect(ui->nextButton, &QPushButton::clicked, this, &Widget::timerTimeOut);
     connect(ui->startButton, &QPushButton::clicked, [this](){ timer->start(1000); });
     connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop(); });
+    connect(ui->clearButton, &QPushButton::clicked, this, &Widget::clearCells);
 }
 
 int Widget::returnNeighborNums(int row, int col)
@@ -58,21 +59,24 @@ int Widget::returnNeighborNums(int row, int col)
     return nums;
 }
 
-void Widget::reproductCells(int row, int col)
+QVector<std::pair<int, int> > Widget::returnReproductCellPos(int row, int col)
 {
+    QVector<std::pair<int, int> > reproductCellPos;
+
     for(int i = -1; i < 2; ++i) {
         for(int j = -1; j < 2; ++j) {
             if(row + i >= 0 && row + i <= 29 && col + j >= 0 && col + j <= 29) {
-                qDebug() << returnNeighborNums(row + i, col + j) << row + i << col + j;
                 if(row + i == row && col + j == col) {
                     continue;
                 }
                 else if(returnNeighborNums(row + i, col + j) == 3) {
-                    cellLblVec[row + i][col + j]->alive();
+                    reproductCellPos.push_back(std::make_pair(row + i, col + j));
                 }
             }
         }
     }
+
+    return reproductCellPos;
 }
 
 void Widget::timerTimeOut()
@@ -80,7 +84,27 @@ void Widget::timerTimeOut()
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
             if(cellLblVec[i][j]->isAlive) {
-                reproductCells(i, j);
+                QVector<std::pair<int, int> > reproductCellPos = returnReproductCellPos(i, j);
+
+                if(returnNeighborNums(i, j) < 2 || returnNeighborNums(i, j) > 3) {
+                    cellLblVec[i][j]->dead();
+                }
+
+                qDebug() << reproductCellPos;
+                for(int i = 0; i < reproductCellPos.size(); ++i) {
+                    cellLblVec[reproductCellPos[i].first][reproductCellPos[i].second]->alive();
+                }
+            }
+        }
+    }
+}
+
+void Widget::clearCells()
+{
+    for(int i = 0; i < rows; ++i) {
+        for(int j = 0; j < cols; ++j) {
+            if(cellLblVec[i][j]->isAlive) {
+                cellLblVec[i][j]->dead();
             }
         }
     }

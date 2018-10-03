@@ -26,10 +26,11 @@ private:
 
     void setGameLayout();
     int returnNeighborNums(int, int);
-    void reproductCells(int, int);
+    QVector<std::pair<int, int> > returnReproductCellPos(int, int);
 
 private slots:
     void timerTimeOut();
+    void clearCells();
 };
 
 #endif // WIDGET_H
