@@ -59,10 +59,8 @@ int Widget::returnNeighborNums(int row, int col)
     return nums;
 }
 
-QVector<std::pair<int, int> > Widget::returnReproductCellPos(int row, int col)
+void Widget::addReproductCellPos(int row, int col)
 {
-    QVector<std::pair<int, int> > reproductCellPos;
-
     for(int i = -1; i < 2; ++i) {
         for(int j = -1; j < 2; ++j) {
             if(row + i >= 0 && row + i <= 29 && col + j >= 0 && col + j <= 29) {
@@ -75,32 +73,47 @@ QVector<std::pair<int, int> > Widget::returnReproductCellPos(int row, int col)
             }
         }
     }
+}
 
-    return reproductCellPos;
+void Widget::addAboutToDieCellPos(int row, int col)
+{
+    if(returnNeighborNums(row, col) < 2 || returnNeighborNums(row, col) > 3) {
+        aboutToDieCellPos.push_back(std::make_pair(row, col));
+    }
+}
+
+void Widget::changeCellStatus()
+{
+    for(int i = 0; i < reproductCellPos.size(); ++i) {
+        cellLblVec[reproductCellPos[i].first][reproductCellPos[i].second]->alive();
+    }
+
+    for(int i = 0; i < aboutToDieCellPos.size(); ++i) {
+        cellLblVec[aboutToDieCellPos[i].first][aboutToDieCellPos[i].second]->dead();
+    }
 }
 
 void Widget::timerTimeOut()
 {
+    reproductCellPos.clear();
+    aboutToDieCellPos.clear();
+
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
             if(cellLblVec[i][j]->isAlive) {
-                QVector<std::pair<int, int> > reproductCellPos = returnReproductCellPos(i, j);
-
-                if(returnNeighborNums(i, j) < 2 || returnNeighborNums(i, j) > 3) {
-                    cellLblVec[i][j]->dead();
-                }
-
-                qDebug() << reproductCellPos;
-                for(int i = 0; i < reproductCellPos.size(); ++i) {
-                    cellLblVec[reproductCellPos[i].first][reproductCellPos[i].second]->alive();
-                }
+                addReproductCellPos(i, j);
+                addAboutToDieCellPos(i, j);
             }
         }
     }
+
+    changeCellStatus();
 }
 
 void Widget::clearCells()
 {
+    timer->stop();
+
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
             if(cellLblVec[i][j]->isAlive) {

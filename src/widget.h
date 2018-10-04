@@ -23,10 +23,14 @@ private:
     static const int cols;
     QVector<QVector<CellLabel *> > cellLblVec;
     QTimer *timer;
+    QVector<std::pair<int, int> > reproductCellPos;
+    QVector<std::pair<int, int> > aboutToDieCellPos;
 
     void setGameLayout();
     int returnNeighborNums(int, int);
-    QVector<std::pair<int, int> > returnReproductCellPos(int, int);
+    void addReproductCellPos(int, int);
+    void addAboutToDieCellPos(int, int);
+    void changeCellStatus();
 
 private slots:
     void timerTimeOut();
