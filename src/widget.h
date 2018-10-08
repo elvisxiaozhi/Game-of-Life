@@ -25,6 +25,7 @@ private:
     QTimer *timer;
     QVector<std::pair<int, int> > reproductCellPos;
     QVector<std::pair<int, int> > aboutToDieCellPos;
+    bool hasStarted;
 
     void setGameLayout();
     int returnNeighborNums(int, int);

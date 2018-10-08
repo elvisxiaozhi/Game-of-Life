@@ -10,6 +10,8 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    hasStarted = false;
+
     setGameLayout();
 }
 
@@ -38,10 +40,14 @@ void Widget::setGameLayout()
 
     connect(timer, &QTimer::timeout, this, &Widget::timerTimeOut);
     connect(ui->nextButton, &QPushButton::clicked, this, &Widget::timerTimeOut);
-    connect(ui->startButton, &QPushButton::clicked, [this](){ timer->start(1000); });
-    connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop(); });
+    connect(ui->startButton, &QPushButton::clicked, [this](){ hasStarted = true; timer->start(1000 / ui->horizontalSlider->value() ); });
+    connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop();  hasStarted = false; });
     connect(ui->clearButton, &QPushButton::clicked, this, &Widget::clearCells);
-    connect(ui->horizontalSlider, &QSlider::valueChanged, [this](int value) { timer->start(1000 / value); });
+    connect(ui->horizontalSlider, &QSlider::valueChanged, [this](int value) {
+        if(hasStarted) {
+            timer->start(1000 / value);
+        }
+    });
 }
 
 int Widget::returnNeighborNums(int row, int col)
@@ -117,6 +123,7 @@ void Widget::timerTimeOut()
 void Widget::clearCells()
 {
     timer->stop();
+    hasStarted = false;
 
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {

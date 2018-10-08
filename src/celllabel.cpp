@@ -15,7 +15,11 @@ CellLabel::CellLabel(QWidget *parent, int row, int col) : QLabel(parent), isAliv
 void CellLabel::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
-        isAlive = true;
-        setStyleSheet("QLabel { background-color: black; }");
+        if(isAlive) {
+            emit dead();
+        }
+        else {
+            emit alive();
+        }
     }
 }
