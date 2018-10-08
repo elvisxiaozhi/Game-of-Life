@@ -20,6 +20,9 @@ Widget::~Widget()
 
 void Widget::setGameLayout()
 {
+    ui->horizontalSlider->setMinimum(1);
+    ui->horizontalSlider->setMaximum(10);
+
     for(int i = 0; i < rows; ++i) {
         QVector<CellLabel *> colVec;
         for(int j = 0; j < cols; ++j) {
@@ -38,6 +41,7 @@ void Widget::setGameLayout()
     connect(ui->startButton, &QPushButton::clicked, [this](){ timer->start(1000); });
     connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop(); });
     connect(ui->clearButton, &QPushButton::clicked, this, &Widget::clearCells);
+    connect(ui->horizontalSlider, &QSlider::valueChanged, [this](int value) { timer->start(1000 / value); });
 }
 
 int Widget::returnNeighborNums(int row, int col)
