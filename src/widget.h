@@ -19,6 +19,7 @@ public:
 
 private:
     Ui::Widget *ui;
+    static const int border;
     static const int rows;
     static const int cols;
     QVector<QVector<CellLabel *> > cellLblVec;

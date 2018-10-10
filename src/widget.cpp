@@ -1,8 +1,9 @@
 #include "widget.h"
 #include "ui_widget.h"
 
-const int Widget::rows = 30;
-const int Widget::cols = 30;
+const int Widget::border = 20;
+const int Widget::rows = 30 + Widget::border * 2;
+const int Widget::cols = 30 + Widget::border * 2;
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -29,7 +30,13 @@ void Widget::setGameLayout()
         QVector<CellLabel *> colVec;
         for(int j = 0; j < cols; ++j) {
             CellLabel *cell = new CellLabel(this, i, j);
-            ui->gameLayout->addWidget(cell, i, j);
+
+            if(i < border || i >= rows - border || j < border || j >= cols - border) {
+                cell->hide();
+            }
+            else {
+                ui->gameLayout->addWidget(cell, i, j);
+            }
 
             colVec.push_back(cell);
         }
@@ -55,7 +62,7 @@ int Widget::returnNeighborNums(int row, int col)
     int nums = 0;
     for(int i = -1; i < 2; ++i) {
         for(int j = -1; j < 2; ++j) {
-            if(row + i >= 0 && row + i <= 29 && col + j >= 0 && col + j <= 29) {
+            if(row + i >= 0 && row + i < rows && col + j >= 0 && col + j < cols) {
                 if(row + i == row && col + j == col) {
                     continue;
                 }
@@ -73,7 +80,7 @@ void Widget::addReproductCellPos(int row, int col)
 {
     for(int i = -1; i < 2; ++i) {
         for(int j = -1; j < 2; ++j) {
-            if(row + i >= 0 && row + i <= 29 && col + j >= 0 && col + j <= 29) {
+            if(row + i >= 0 && row + i < rows && col + j >= 0 && col + j < cols) {
                 if(row + i == row && col + j == col) {
                     continue;
                 }
