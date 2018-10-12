@@ -28,11 +28,15 @@ private:
     QVector<std::pair<int, int> > aboutToDieCellPos;
     bool hasStarted;
 
+    void setSettingsLayout();
     void setGameLayout();
     int returnNeighborNums(int, int);
     void addReproductCellPos(int, int);
     void addAboutToDieCellPos(int, int);
     void changeCellStatus();
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private slots:
     void timerTimeOut();

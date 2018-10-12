@@ -26,7 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         widget.cpp \
-    celllabel.cpp
+    celllabel.cpp \
 
 HEADERS += \
         widget.h \
@@ -34,3 +34,8 @@ HEADERS += \
 
 FORMS += \
         widget.ui
+
+RC_ICONS += \../icons/game-of-life.ico
+
+RESOURCES += \
+    ../icons/icons.qrc

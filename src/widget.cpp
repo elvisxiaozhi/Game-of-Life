@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include <QKeyEvent>
 
 const int Widget::border = 20;
 const int Widget::rows = 30 + Widget::border * 2;
@@ -10,9 +11,11 @@ Widget::Widget(QWidget *parent) :
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    setWindowTitle("Game of Life");
 
     hasStarted = false;
 
+    setSettingsLayout();
     setGameLayout();
 }
 
@@ -21,11 +24,31 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::setSettingsLayout()
+{
+    //install event filter to block signals from QComobox, so when the key is pressed, the index of QComobox will not change
+    ui->comboBox->installEventFilter(this);
+
+    ui->comboBox->addItem("Clear");
+    ui->comboBox->addItem("Glider");
+    ui->comboBox->addItem("Small Exploder");
+    ui->comboBox->addItem("Exploder");
+    ui->comboBox->addItem("10 Cell Row");
+    ui->comboBox->addItem("Lightweight Spaceship");
+    ui->comboBox->addItem("Tumbler");
+    ui->comboBox->addItem("Gosper Glider Gun");
+
+//    ui->speedLbl->setPixmap(QPixmap(":/icons/speed.png").scaled(40, 40, Qt::KeepAspectRatio));
+//    ui->enlargeLbl->setPixmap(QPixmap(":/icons/enlarge.png").scaled(40, 40, Qt::KeepAspectRatio));
+    ui->speedLbl->setText("Speed: ");
+    ui->enlargeLbl->setText("Enlarge: ");
+
+    ui->speedSlider->setMinimum(1);
+    ui->speedSlider->setMaximum(10);
+}
+
 void Widget::setGameLayout()
 {
-    ui->horizontalSlider->setMinimum(1);
-    ui->horizontalSlider->setMaximum(10);
-
     for(int i = 0; i < rows; ++i) {
         QVector<CellLabel *> colVec;
         for(int j = 0; j < cols; ++j) {
@@ -47,10 +70,10 @@ void Widget::setGameLayout()
 
     connect(timer, &QTimer::timeout, this, &Widget::timerTimeOut);
     connect(ui->nextButton, &QPushButton::clicked, this, &Widget::timerTimeOut);
-    connect(ui->startButton, &QPushButton::clicked, [this](){ hasStarted = true; timer->start(1000 / ui->horizontalSlider->value() ); });
+    connect(ui->startButton, &QPushButton::clicked, [this](){ hasStarted = true; timer->start(1000 / ui->speedSlider->value() ); });
     connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop();  hasStarted = false; });
     connect(ui->clearButton, &QPushButton::clicked, this, &Widget::clearCells);
-    connect(ui->horizontalSlider, &QSlider::valueChanged, [this](int value) {
+    connect(ui->speedSlider, &QSlider::valueChanged, [this](int value) {
         if(hasStarted) {
             timer->start(1000 / value);
         }
@@ -108,6 +131,19 @@ void Widget::changeCellStatus()
     for(int i = 0; i < aboutToDieCellPos.size(); ++i) {
         cellLblVec[aboutToDieCellPos[i].first][aboutToDieCellPos[i].second]->dead();
     }
+}
+
+bool Widget::eventFilter(QObject *watched, QEvent *event)
+{
+    if(ui->comboBox) {
+        if(ui->comboBox == watched && event->type() == QEvent::KeyPress){
+           QKeyEvent *key = static_cast<QKeyEvent *>(event);
+           if(!key->text().isEmpty())
+                return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
 }
 
 void Widget::timerTimeOut()

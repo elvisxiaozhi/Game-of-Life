@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>enlarge.png</file>
+        <file>speed.png</file>
+    </qresource>
+</RCC>
