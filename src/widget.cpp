@@ -3,8 +3,9 @@
 #include <QKeyEvent>
 
 const int Widget::border = 20;
-const int Widget::rows = 30 + Widget::border * 2;
-const int Widget::cols = 30 + Widget::border * 2;
+const int Widget::hiddenPlaces = 10;
+const int Widget::rows = 30 + Widget::border * 2 + Widget::hiddenPlaces * 2;
+const int Widget::cols = 30 + Widget::border * 2 + Widget::hiddenPlaces * 2;
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -12,11 +13,12 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Game of Life");
+    setFixedSize(800, 700);
 
     hasStarted = false;
 
-    setSettingsLayout();
     setGameLayout();
+    setSettingsLayout();
 }
 
 Widget::~Widget()
@@ -45,6 +47,11 @@ void Widget::setSettingsLayout()
 
     ui->speedSlider->setMinimum(1);
     ui->speedSlider->setMaximum(10);
+
+    ui->enlargeSlider->setMinimum(0);
+    ui->enlargeSlider->setMaximum(20);
+
+    connect(ui->enlargeSlider, &QSlider::valueChanged, this, &Widget::enlargeBoard);
 }
 
 void Widget::setGameLayout()
@@ -53,18 +60,14 @@ void Widget::setGameLayout()
         QVector<CellLabel *> colVec;
         for(int j = 0; j < cols; ++j) {
             CellLabel *cell = new CellLabel(this, i, j);
-
-            if(i < border || i >= rows - border || j < border || j >= cols - border) {
-                cell->hide();
-            }
-            else {
-                ui->gameLayout->addWidget(cell, i, j);
-            }
+            cell->hide();
 
             colVec.push_back(cell);
         }
         cellLblVec.push_back(colVec);
     }
+
+    addLblsToBoard();
 
     timer = new QTimer(this);
 
@@ -78,6 +81,21 @@ void Widget::setGameLayout()
             timer->start(1000 / value);
         }
     });
+}
+
+void Widget::addLblsToBoard()
+{
+    for(int i = 0; i < rows; ++i) {
+        for(int j = 0; j < cols; ++j) {
+            if(i >= border + hiddenPlaces- ui->enlargeSlider->value() &&
+                    i < rows - border - hiddenPlaces + ui->enlargeSlider->value() &&
+                    j >= border + hiddenPlaces - ui->enlargeSlider->value() &&
+                    j < cols - border - hiddenPlaces - ui->enlargeSlider->value()) {
+                cellLblVec[i][j]->show();
+                ui->gameLayout->addWidget(cellLblVec[i][j], i, j);
+            }
+        }
+    }
 }
 
 int Widget::returnNeighborNums(int row, int col)
@@ -175,4 +193,18 @@ void Widget::clearCells()
             }
         }
     }
+}
+
+void Widget::enlargeBoard(int)
+{
+    for(int i = 0; i < rows; ++i) {
+        for(int j = 0; j < cols; ++j) {
+            if(cellLblVec[i][j]->isVisible()) {
+                ui->gameLayout->removeWidget(cellLblVec[i][j]);
+                cellLblVec[i][j]->hide();
+            }
+        }
+    }
+
+    addLblsToBoard();
 }

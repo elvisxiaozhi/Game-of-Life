@@ -20,6 +20,7 @@ public:
 private:
     Ui::Widget *ui;
     static const int border;
+    static const int hiddenPlaces;
     static const int rows;
     static const int cols;
     QVector<QVector<CellLabel *> > cellLblVec;
@@ -30,6 +31,7 @@ private:
 
     void setSettingsLayout();
     void setGameLayout();
+    void addLblsToBoard();
     int returnNeighborNums(int, int);
     void addReproductCellPos(int, int);
     void addAboutToDieCellPos(int, int);
@@ -41,6 +43,7 @@ protected:
 private slots:
     void timerTimeOut();
     void clearCells();
+    void enlargeBoard(int);
 };
 
 #endif // WIDGET_H
