@@ -31,11 +31,14 @@ private:
 
     void setSettingsLayout();
     void setGameLayout();
-    void addLblsToBoard();
+    void changeBoardSize();
     int returnNeighborNums(int, int);
     void addReproductCellPos(int, int);
     void addAboutToDieCellPos(int, int);
     void changeCellStatus();
+    void setGlider();
+    void setSmallExploder();
+    void setExploder();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
@@ -43,6 +46,7 @@ protected:
 private slots:
     void timerTimeOut();
     void clearCells();
+    void startOrStopGame();
 };
 
 #endif // WIDGET_H

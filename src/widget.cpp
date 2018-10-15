@@ -19,6 +19,8 @@ Widget::Widget(QWidget *parent) :
 
     setGameLayout();
     setSettingsLayout();
+
+    setExploder();
 }
 
 Widget::~Widget()
@@ -39,6 +41,7 @@ void Widget::setSettingsLayout()
     ui->comboBox->addItem("Lightweight Spaceship");
     ui->comboBox->addItem("Tumbler");
     ui->comboBox->addItem("Gosper Glider Gun");
+    ui->comboBox->setCurrentIndex(1);
 
 //    ui->speedLbl->setPixmap(QPixmap(":/icons/speed.png").scaled(40, 40, Qt::KeepAspectRatio));
 //    ui->enlargeLbl->setPixmap(QPixmap(":/icons/enlarge.png").scaled(40, 40, Qt::KeepAspectRatio));
@@ -75,8 +78,7 @@ void Widget::setGameLayout()
 
     connect(timer, &QTimer::timeout, this, &Widget::timerTimeOut);
     connect(ui->nextButton, &QPushButton::clicked, this, &Widget::timerTimeOut);
-    connect(ui->startButton, &QPushButton::clicked, [this](){ hasStarted = true; timer->start(1000 / ui->speedSlider->value() ); });
-    connect(ui->stopButton, &QPushButton::clicked, [this](){ timer->stop();  hasStarted = false; });
+    connect(ui->startAndStopBtn, &QPushButton::clicked, this, &Widget::startOrStopGame);
     connect(ui->clearButton, &QPushButton::clicked, this, &Widget::clearCells);
     connect(ui->speedSlider, &QSlider::valueChanged, [this](int value) {
         if(hasStarted) {
@@ -156,6 +158,53 @@ void Widget::changeCellStatus()
     }
 }
 
+void Widget::setGlider()
+{
+    cellLblVec[rows / 2 - 1][cols / 2]->alive();
+    cellLblVec[rows / 2][cols / 2 + 1]->alive();
+    for(int i = 0; i < 3; ++i) {
+        cellLblVec[rows / 2 + 1][cols / 2 - 1 + i]->alive();
+    }
+}
+
+void Widget::setSmallExploder()
+{
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 0; j < 3; ++j) {
+            cellLblVec[rows / 2 - 2 + i][cols / 2 - 1 + j]->alive();
+        }
+    }
+
+    cellLblVec[rows / 2][cols / 2]->dead();
+    cellLblVec[rows / 2 - 2][cols / 2 - 1]->dead();
+    cellLblVec[rows / 2 - 2][cols / 2 + 1]->dead();
+    cellLblVec[rows / 2 + 1][cols / 2 - 1]->dead();
+    cellLblVec[rows / 2 + 1][cols / 2 + 1]->dead();
+}
+
+void Widget::setExploder()
+{
+    for(int i = - 5; i <= 5; ++i) {
+        if(i == 0) {
+            continue;
+        }
+        else {
+            cellLblVec[rows / 2][cols / 2 + i]->alive();
+        }
+    }
+
+    for(int i = -1; i < 2; ++i) {
+        if(i == 0) {
+            cellLblVec[rows / 2 + i][cols / 2 - 3]->dead();
+            cellLblVec[rows / 2 + i][cols / 2 + 3]->dead();
+        }
+        else {
+            cellLblVec[rows / 2 + i][cols / 2 - 3]->alive();
+            cellLblVec[rows / 2 + i][cols / 2 + 3]->alive();
+        }
+    }
+}
+
 bool Widget::eventFilter(QObject *watched, QEvent *event)
 {
     if(ui->comboBox) {
@@ -197,5 +246,19 @@ void Widget::clearCells()
                 cellLblVec[i][j]->dead();
             }
         }
+    }
+}
+
+void Widget::startOrStopGame()
+{
+    if(hasStarted) {
+        timer->stop();
+        hasStarted = false;
+        ui->startAndStopBtn->setText("Start");
+    }
+    else {
+        timer->start(1000 / ui->speedSlider->value());
+        hasStarted = true;
+        ui->startAndStopBtn->setText("Stop");
     }
 }
