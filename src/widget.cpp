@@ -51,7 +51,7 @@ void Widget::setSettingsLayout()
     ui->enlargeSlider->setMinimum(0);
     ui->enlargeSlider->setMaximum(20);
 
-    connect(ui->enlargeSlider, &QSlider::valueChanged, this, &Widget::enlargeBoard);
+    connect(ui->enlargeSlider, &QSlider::valueChanged, [this](int){ changeBoardSize(); });
 }
 
 void Widget::setGameLayout()
@@ -62,12 +62,14 @@ void Widget::setGameLayout()
             CellLabel *cell = new CellLabel(this, i, j);
             cell->hide();
 
+            ui->gameLayout->addWidget(cell, i, j);
+
             colVec.push_back(cell);
         }
         cellLblVec.push_back(colVec);
     }
 
-    addLblsToBoard();
+    changeBoardSize();
 
     timer = new QTimer(this);
 
@@ -83,16 +85,19 @@ void Widget::setGameLayout()
     });
 }
 
-void Widget::addLblsToBoard()
+void Widget::changeBoardSize()
 {
+    qDebug() << ui->enlargeSlider->value();
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
-            if(i >= border + hiddenPlaces- ui->enlargeSlider->value() &&
+            if(i >= border + hiddenPlaces - ui->enlargeSlider->value() &&
                     i < rows - border - hiddenPlaces + ui->enlargeSlider->value() &&
                     j >= border + hiddenPlaces - ui->enlargeSlider->value() &&
-                    j < cols - border - hiddenPlaces - ui->enlargeSlider->value()) {
+                    j < cols - border - hiddenPlaces + ui->enlargeSlider->value()) {
                 cellLblVec[i][j]->show();
-                ui->gameLayout->addWidget(cellLblVec[i][j], i, j);
+            }
+            else {
+                cellLblVec[i][j]->hide();
             }
         }
     }
@@ -193,18 +198,4 @@ void Widget::clearCells()
             }
         }
     }
-}
-
-void Widget::enlargeBoard(int)
-{
-    for(int i = 0; i < rows; ++i) {
-        for(int j = 0; j < cols; ++j) {
-            if(cellLblVec[i][j]->isVisible()) {
-                ui->gameLayout->removeWidget(cellLblVec[i][j]);
-                cellLblVec[i][j]->hide();
-            }
-        }
-    }
-
-    addLblsToBoard();
 }

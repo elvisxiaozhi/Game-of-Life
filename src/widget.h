@@ -43,7 +43,6 @@ protected:
 private slots:
     void timerTimeOut();
     void clearCells();
-    void enlargeBoard(int);
 };
 
 #endif // WIDGET_H
