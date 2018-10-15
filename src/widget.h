@@ -39,6 +39,10 @@ private:
     void setGlider();
     void setSmallExploder();
     void setExploder();
+    void set10CellRow();
+    void setLightweightSpaceship();
+    void setTumbler();
+    void setGosperGliderGun();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);

@@ -4,8 +4,8 @@
 
 const int Widget::border = 20;
 const int Widget::hiddenPlaces = 10;
-const int Widget::rows = 30 + Widget::border * 2 + Widget::hiddenPlaces * 2;
-const int Widget::cols = 30 + Widget::border * 2 + Widget::hiddenPlaces * 2;
+const int Widget::rows = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
+const int Widget::cols = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -20,7 +20,7 @@ Widget::Widget(QWidget *parent) :
     setGameLayout();
     setSettingsLayout();
 
-    setExploder();
+    setGosperGliderGun();
 }
 
 Widget::~Widget()
@@ -205,6 +205,85 @@ void Widget::setExploder()
     }
 }
 
+void Widget::set10CellRow()
+{
+    for(int i = -5; i < 5; ++i) {
+        cellLblVec[rows / 2][cols / 2 + i]->alive();
+    }
+}
+
+void Widget::setLightweightSpaceship()
+{
+    for(int i = 0; i < 3; ++i) {
+        cellLblVec[rows / 2 - 2 + i][cols / 2]->alive();
+        cellLblVec[rows / 2 - 2][cols / 2 - 3 + i]->alive();
+    }
+
+    cellLblVec[rows / 2 - 1][cols / 2 - 4]->alive();
+    cellLblVec[rows / 2 + 1][cols / 2 - 4]->alive();
+    cellLblVec[rows / 2 + 1][cols / 2 - 1]->alive();
+}
+
+void Widget::setTumbler()
+{
+    for(int i = -2; i <= 2; ++i) {
+        cellLblVec[rows / 2 + i][cols / 2 - 1]->alive();
+        cellLblVec[rows / 2 + i][cols / 2 + 1]->alive();
+    }
+    for(int i = 0; i < 3; ++i) {
+        cellLblVec[rows / 2 + 1 + i][cols / 2 - 3]->alive();
+        cellLblVec[rows / 2 + 1 + i][cols / 2 + 3]->alive();
+    }
+    for(int i = 0; i < 2; ++i) {
+        cellLblVec[rows / 2 - 2 + i][cols / 2 - 2]->alive();
+        cellLblVec[rows / 2 - 2 + i][cols / 2 + 2]->alive();
+    }
+
+    cellLblVec[rows / 2 + 3][cols / 2 - 2]->alive();
+    cellLblVec[rows / 2 + 3][cols / 2 + 2]->alive();
+}
+
+void Widget::setGosperGliderGun()
+{
+    for(int i = 0; i < 2; ++i) {
+        for(int j = 0; j < 2; ++j) {
+            cellLblVec[rows / 2 - 2 + i][cols / 2 - 2 - 17 + j]->alive();
+            cellLblVec[rows / 2 - 4 + i][cols / 2 - 2 + 17 + j]->alive();
+        }
+    }
+
+    for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < 3; ++j) {
+            if(i == 0 && j == 0) {
+                continue;
+            }
+            else if(i == 1 && j == 1) {
+                continue;
+            }
+            else if(i == 2 && j == 2) {
+                continue;
+            }
+            else {
+                cellLblVec[rows / 2 - 2 + i][cols / 2 - 11 + j]->alive();
+                cellLblVec[rows / 2 - 4 + i][cols / 2 + 3 + j]->alive();
+            }
+        }
+    }
+
+    for(int i = 0; i < 3; ++i) {
+        cellLblVec[rows / 2 + i][cols / 2 - 3]->alive();
+        cellLblVec[rows / 2 + i + 3][cols / 2 + 16]->alive();
+        cellLblVec[rows / 2 + 8][cols / 2 + 5 + i]->alive();
+    }
+
+    cellLblVec[rows / 2][cols / 2 - 2]->alive();
+    cellLblVec[rows / 2 + 1][cols / 2 - 1]->alive();
+    cellLblVec[rows / 2 + 3][cols / 2 + 17]->alive();
+    cellLblVec[rows / 2 + 4][cols / 2 + 18]->alive();
+    cellLblVec[rows / 2 + 9][cols / 2 + 5]->alive();
+    cellLblVec[rows / 2 + 10][cols / 2 + 6]->alive();
+}
+
 bool Widget::eventFilter(QObject *watched, QEvent *event)
 {
     if(ui->comboBox) {
@@ -239,6 +318,7 @@ void Widget::clearCells()
 {
     timer->stop();
     hasStarted = false;
+    ui->startAndStopBtn->setText("Stop");
 
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
