@@ -3,8 +3,8 @@
 #include <QKeyEvent>
 
 const int Widget::border = 20;
-const int Widget::hiddenPlaces = 10;
-const int Widget::rows = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
+const int Widget::hiddenPlaces = 15;
+const int Widget::rows = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2; //showing 75 * 75 is maximum
 const int Widget::cols = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
 const int Widget::Clear = 0;
 const int Widget::Glider = 1;
@@ -21,14 +21,13 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Game of Life");
-    setFixedSize(800, 700);
+    setFixedSize(900, 800);
 
     hasStarted = false;
 
     setGameLayout();
     setSettingsLayout();
-
-    setGosperGliderGun();
+    setGlider();
 }
 
 Widget::~Widget()
@@ -60,7 +59,7 @@ void Widget::setSettingsLayout()
     ui->speedSlider->setMaximum(10);
 
     ui->enlargeSlider->setMinimum(0);
-    ui->enlargeSlider->setMaximum(20);
+    ui->enlargeSlider->setMaximum(15);
 
     connect(ui->comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Widget::comboBoxChanged);
     connect(ui->enlargeSlider, &QSlider::valueChanged, [this](int){ changeBoardSize(); });
@@ -98,7 +97,6 @@ void Widget::setGameLayout()
 
 void Widget::changeBoardSize()
 {
-    qDebug() << ui->enlargeSlider->value();
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
             if(i >= border + hiddenPlaces - ui->enlargeSlider->value() &&
