@@ -23,6 +23,14 @@ private:
     static const int hiddenPlaces;
     static const int rows;
     static const int cols;
+    static const int Clear;
+    static const int Glider;
+    static const int SmallExploder;
+    static const int Exploder;
+    static const int TenCellRow;
+    static const int LightWeightSpaceship;
+    static const int Tumbler;
+    static const int GosperGliderGun;
     QVector<QVector<CellLabel *> > cellLblVec;
     QTimer *timer;
     QVector<std::pair<int, int> > reproductCellPos;
@@ -51,6 +59,7 @@ private slots:
     void timerTimeOut();
     void clearCells();
     void startOrStopGame();
+    void comboBoxChanged(int);
 };
 
 #endif // WIDGET_H

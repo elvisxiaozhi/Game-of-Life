@@ -6,6 +6,14 @@ const int Widget::border = 20;
 const int Widget::hiddenPlaces = 10;
 const int Widget::rows = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
 const int Widget::cols = 40 + Widget::border * 2 + Widget::hiddenPlaces * 2;
+const int Widget::Clear = 0;
+const int Widget::Glider = 1;
+const int Widget::SmallExploder = 2;
+const int Widget::Exploder = 3;
+const int Widget::TenCellRow = 4;
+const int Widget::LightWeightSpaceship = 5;
+const int Widget::Tumbler = 6;
+const int Widget::GosperGliderGun = 7;
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -41,7 +49,7 @@ void Widget::setSettingsLayout()
     ui->comboBox->addItem("Lightweight Spaceship");
     ui->comboBox->addItem("Tumbler");
     ui->comboBox->addItem("Gosper Glider Gun");
-    ui->comboBox->setCurrentIndex(1);
+    ui->comboBox->setCurrentIndex(Glider);
 
 //    ui->speedLbl->setPixmap(QPixmap(":/icons/speed.png").scaled(40, 40, Qt::KeepAspectRatio));
 //    ui->enlargeLbl->setPixmap(QPixmap(":/icons/enlarge.png").scaled(40, 40, Qt::KeepAspectRatio));
@@ -54,6 +62,7 @@ void Widget::setSettingsLayout()
     ui->enlargeSlider->setMinimum(0);
     ui->enlargeSlider->setMaximum(20);
 
+    connect(ui->comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Widget::comboBoxChanged);
     connect(ui->enlargeSlider, &QSlider::valueChanged, [this](int){ changeBoardSize(); });
 }
 
@@ -318,7 +327,8 @@ void Widget::clearCells()
 {
     timer->stop();
     hasStarted = false;
-    ui->startAndStopBtn->setText("Stop");
+    ui->startAndStopBtn->setText("Start");
+    ui->comboBox->setCurrentIndex(Clear);
 
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
@@ -340,5 +350,35 @@ void Widget::startOrStopGame()
         timer->start(1000 / ui->speedSlider->value());
         hasStarted = true;
         ui->startAndStopBtn->setText("Stop");
+    }
+}
+
+void Widget::comboBoxChanged(int index)
+{
+    clearCells();
+    switch (index) {
+    case Glider:
+        setGlider();
+        break;
+    case SmallExploder:
+        setSmallExploder();
+        break;
+    case Exploder:
+        setExploder();
+        break;
+    case TenCellRow:
+        set10CellRow();
+        break;
+    case LightWeightSpaceship:
+        setLightweightSpaceship();
+        break;
+    case Tumbler:
+        setTumbler();
+        break;
+    case GosperGliderGun:
+        setGosperGliderGun();
+        break;
+    default:
+        break;
     }
 }
